@@ -5,6 +5,10 @@ var answerButtons = document.querySelectorAll(".answer");
 var timerElement = document.getElementById("timer");
 var initialsInput = document.getElementById("initials");
 var saveButton = document.getElementById("save-button");
+var saveContainer = document.getElementById("save-container");
+let currentQuestionIndex = 0;
+let timer;
+let timeLeft = 60;
 
 var questions = [
   {
@@ -13,13 +17,17 @@ var questions = [
       { text: "Hyper Text Markup Language", correct: true },
       { text: "Hyper Transfer Markup Language", correct: false },
       { text: "High Technology Markup Language", correct: false },
-    ],
+    ]
+  },
+  {
+    question: "How many days are in october?",
+    answers: [
+      {text: "29", correct: false},
+      {text: "31", correct: true},
+      {text: "30", correct: false},
+    ]
   },
 ];
-
-let currentQuestionIndex = 0;
-let timer;
-let timeLeft = 60;
 
 startButton.addEventListener("click", startQuiz);
 
@@ -32,25 +40,35 @@ function startQuiz() {
 
 function showQuestion() {
   const question = questions[currentQuestionIndex];
-  questionText.innerText = question.question;
+  console.log(question);
+  questionText.textContent = question.question;
 
   answerButtons.forEach((button, index) => {
+    console.log(index);
     button.innerText = question.answers[index].text;
     button.addEventListener("click", () => selectAnswer(index));
   });
 }
 
 function selectAnswer(selectedIndex) {
+  console.log(selectedIndex);
   if (questions[currentQuestionIndex].answers[selectedIndex].correct) {
-    currentQuestionIndex++;
     if (currentQuestionIndex < questions.length) {
+      currentQuestionIndex++;
       showQuestion();
     } else {
       endGame();
+      saveContainer.removeAttribute("class");
     }
   } else {
     timeLeft -= 10;
   }
+  if (timeLeft <= 0 || currentQuestionIndex === questions.length) { 
+    endGame();
+  }
+    else {
+      showQuestion();
+    }
 }
 
 function updateTimer() {
